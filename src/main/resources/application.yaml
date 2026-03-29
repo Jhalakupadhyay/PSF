@@ -1,0 +1,96 @@
+# For production, set JWT_SECRET (and datasource/Redis) via env. Defaults below allow local bootRun.
+jwt:
+  secret: ${JWT_SECRET:dev-secret-change-in-production}
+  access-token-expiration-ms: ${JWT_ACCESS_EXPIRATION:3600000}
+  refresh-token-expiration-ms: ${JWT_REFRESH_EXPIRATION:86400000}
+
+qna-info:
+  base-url: ${QNA_BASE_URL:http://localhost:8001}
+  connect-timeout-ms: ${QNA_CONNECT_TIMEOUT:5000}
+  read-timeout-ms: ${QNA_READ_TIMEOUT:60000}
+
+# Pitch-analyzer (Python) backend for P section
+p-service:
+  base-url: ${P_SERVICE_BASE_URL:http://localhost:8000}
+  connect-timeout-ms: ${P_SERVICE_CONNECT_TIMEOUT:5000}
+  read-timeout-ms: ${P_SERVICE_READ_TIMEOUT:60000}
+  webhook-secret: ${P_SERVICE_WEBHOOK_SECRET:}
+
+server:
+  port: ${SERVER_PORT:8080}
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: psf
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    from: ${MAIL_FROM:${MAIL_USERNAME:noreply@presalesforce.ai}}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/psf}
+    username: ${SPRING_DATASOURCE_USERNAME:psf}
+    password: ${SPRING_DATASOURCE_PASSWORD:psf}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    # Existing environments may already have schema without Flyway metadata.
+    # Baseline at V12 so pending V13+ migrations are applied on startup.
+    baseline-on-migrate: true
+    baseline-version: 12
+    validate-on-migrate: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+
+# Videos: S3 bucket for tenant-wide uploads (golden pitch deck, skillsets)
+# To test without AWS: set app.videos.s3.stub=true (or APP_VIDEOS_S3_STUB=true).
+# For local S3-compatible storage (e.g. MinIO): set endpoint-override (e.g. http://localhost:9000).
+# upload-url-expiry-minutes: 60 allows slow large uploads (e.g. up to 2GB) to complete before URL expires.
+app:
+  videos:
+    s3:
+      bucket: ${APP_VIDEOS_S3_BUCKET:e7-resources}
+      region: ${APP_VIDEOS_S3_REGION:us-east-1}
+      key-prefix: ${APP_VIDEOS_S3_KEY_PREFIX:videos/}
+      endpoint-override: ${APP_VIDEOS_S3_ENDPOINT:}
+      upload-url-expiry-minutes: 60
+      playback-url-expiry-minutes: 60
+      stub: ${APP_VIDEOS_S3_STUB:false}
+
+# Developer secret for docs endpoint (set DEVELOPER_SECRET env var)
+developer:
+  secret: ${DEVELOPER_SECRET:}
+
+# OpenAPI docs + Swagger UI under /api/developer/ — auth via X-Developer-Secret (or ?developer_secret= for GET)
+springdoc:
+  api-docs:
+    path: /api/developer/openapi.json
+  swagger-ui:
+    enabled: true
+    path: /api/developer/swagger-ui.html
+
+logging:
+  level:
+    root: INFO
+    com.grobird.psf: INFO
+    org.springframework.security: INFO

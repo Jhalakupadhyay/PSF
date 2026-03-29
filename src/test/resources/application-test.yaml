@@ -1,0 +1,26 @@
+# Test profile: in-memory H2, no Redis (in-memory token/cache stores), video stub, test JWT
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+  datasource:
+    url: jdbc:h2:mem:psf_test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+  session:
+    store-type: none
+
+jwt:
+  secret: test-jwt-secret-for-unit-tests
+
+app:
+  videos:
+    s3:
+      stub: true

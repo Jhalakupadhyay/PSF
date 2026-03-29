@@ -1,0 +1,59 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ─── Secrets and sensitive config ─────────────────────────────────
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.local
+**/.env.*.local
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+secrets/
+**/secrets/
+application-local.yaml
+application-local.yml
+application-*-local.yaml
+application-*-local.yml
+**/application-local.*
+**.local.yaml
+**.local.yml
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
